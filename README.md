@@ -1,5 +1,5 @@
 # weather-tool
-A CLI weather tool to display the wither in your area.
+A CLI weather tool to display the weather in your area.
 
 - [ ] Create a Cli tool
 - [ ] Make a request to weather app
