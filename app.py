@@ -1,6 +1,7 @@
 #!./env/bin/python3
 
 import sys
+import requests
 import argparse
 
 #print("arg", sys.argv)
@@ -23,5 +24,10 @@ print(args.save)
 
 
 
+url = "https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=" 
+key = "57720d9a6c316db99681b89f9302a6d1"
 
-
+def getWeather():
+	#Request data from api
+	#parse data to python dict
+	#Return what's needed from data
