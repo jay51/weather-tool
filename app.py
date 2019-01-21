@@ -1,9 +1,13 @@
 #!./env/bin/python3
 
-import sys
+import os
 import time
 import requests
 import argparse
+from dotenv import load_dotenv
+#load_dotenv()
+#value = os.getenv("key")
+
 
 parser = argparse.ArgumentParser(
     prog="Weather-tool", description="Display weather results in your area")
@@ -41,7 +45,8 @@ print(args.save)
 def getWeather(query, key=key):
     if type(query) is list:
         query = "+".join(city)
-    url = f"http://api.openweathermap.org/data/2.5/weather?q={query}&appid={key}"
+    #units= imerial for F and units=metric for C and no units will result in kelvins
+    url = f"http://api.openweathermap.org/data/2.5/weather?q={query}&units=imperial&appid={key}"
     r = requests.get(url)
     # parse data to python dict
     json = r.json()
@@ -51,10 +56,22 @@ def getWeather(query, key=key):
     }
 
 
+
+def save_to_file(item):
+    #save item to .env file with key=value formate
+
+
+
+
 def main():
     weather = getWeather(city)
-    for item in weather:
-        print(f"{item} -> {weather[item]}")
+    #Name of city
+    print(weather["name"])
+    #State and description of weather
+    print(f'{weather["weather"][0]["main"]} ,{weather["weather"][0]["description"]}')
+    #Temp and humidity and pressure
+    for item in weather["main"]:
+        print(f"{item} {weather['main'][item]}")
 
 
 if __name__ == "__main__":
