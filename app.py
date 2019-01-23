@@ -6,8 +6,6 @@ import time
 import requests
 import argparse
 from dotenv import load_dotenv
-#load_dotenv()
-#value = os.getenv("key")
 
 
 parser = argparse.ArgumentParser(
@@ -24,29 +22,27 @@ parser.add_argument(
 # nargs == Number of arguments for one action.
 # defaults to none else you pass a --key flag and an api key (--key apikey)
 parser.add_argument(
-    "--key", help="openweathermap api key", type=str, nargs=1)
-
+    "--key", help="openweathermap api key", type=str)
 
 # parse arguments
 args = parser.parse_args()
 
+
 city = args.city
 save = args.save
-# for testing
-key = "57720d9a6c316db99681b89f9302a6d1"
-local_time = time.localtime(time.time())
+key = args.key
+
+# local_time = time.localtime(time.time())
 # print(local_time.tm_hour)
 
 
-print(args.key)
-print(args.city)
-print(args.save)
+print(city)
+print(key)
+# print(save)
 
 
-def getWeather(query, key=key):
-    if type(query) is list:
-        query = "+".join(city)
-    #units= imerial for F and units=metric for C and no units will result in kelvins
+def getWeather(query, key):
+    # units= imeprial for F and units=metric for C and no units will result in kelvins
     url = f"http://api.openweathermap.org/data/2.5/weather?q={query}&units=imperial&appid={key}"
     r = requests.get(url)
     # parse data to python dict
@@ -57,38 +53,47 @@ def getWeather(query, key=key):
     }
 
 
-
 def save_to_file(item, value):
-    #save item to .env file with key=value formate
+    # save item to .env file with key=value formate
     with open(".env") as f:
-       copy =  f.read()
-       copy = re.sub(f"{item}.*", f"{item}={value}", copy)
-        
+        copy = f.read()
+        copy = re.sub(f"{item}.*", f"{item}={value}", copy)
+
     with open(".env", "w") as f:
-      f.write(copy) 
-        
-
-
-
+        f.write(copy)
 
 
 def main():
-    weather = getWeather(city)
-    #Name of city
+
+    weather = getWeather(city, os.getenv("key"))
+    if key:
+        save_to_file("key", key)
+
+    if city and save:
+        save_to_file("city", city)
+
+    # Name of city
     print(weather["name"])
-    #State and description of weather
-    print(f'{weather["weather"][0]["main"]} ,{weather["weather"][0]["description"]}')
-    #Temp and humidity and pressure
+    # State and description of weather
+    print(
+        f'{weather["weather"][0]["main"]} ,{weather["weather"][0]["description"]}')
+    # Temp and humidity and pressure
     for item in weather["main"]:
         print(f"{item} {weather['main'][item]}")
 
 
 if __name__ == "__main__":
+    load_dotenv()
+    # value = os.getenv("key")
+    city = "+".join(city) if type(city) is list else city
+
     main()
 
 
 """Todo
 1. work on caching http requests
 2. work on saving city
-3. work on taking api keys 
+X 3. work on taking api keys
+4. make argpars arguments in a function because it runs befor load_dotenv() gets called
+
 """
