@@ -1,6 +1,7 @@
 #!./env/bin/python3
 
 import os
+import re
 import time
 import requests
 import argparse
@@ -57,8 +58,16 @@ def getWeather(query, key=key):
 
 
 
-def save_to_file(item):
+def save_to_file(item, value):
     #save item to .env file with key=value formate
+    with open(".env") as f:
+       copy =  f.read()
+       copy = re.sub(f"{item}.*", f"{item}={value}", copy)
+        
+    with open(".env", "w") as f:
+      f.write(copy) 
+        
+
 
 
 
