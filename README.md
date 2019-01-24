@@ -16,4 +16,4 @@ A CLI weather tool to display the weather in your area.
 4. Activate virtual environment `source ./env/bin/activate`
 5. install requirments.txt `pip3 install -r requirements.txt` and now you can run `./app.py`
 
-> **Note:** To **Run it from anywhere** add `app.py` to path or Create a link to `~/bin` . inside repo `dir` type `ln app.py /usr/local/bin/<pickName>`.
+> **Note:** To **Run it from anywhere** add `app.py` to path or Create a link to `~/bin` . inside repo `dir` type `ln app.py /usr/local/bin/<pickName>`. And now you can call it like this `<pickName>` from anywhere.
