@@ -23,7 +23,7 @@ def init_arg_parser():
     # nargs == Number of arguments for one action.
     # defaults to none else you pass a --key flag and an api key (--key apikey)
     parser.add_argument(
-        "--key", help="save your own openweathermap api key", type=str, default=key)
+        "--key", help="save your own openweathermap api key", type=str)
 
     # parse arguments
     return parser.parse_args()
@@ -44,14 +44,32 @@ def getWeather(query, key):
     }
 
 
+def get_location():
+    r = requests.get("https://ipinfo.io")
+    if r.status_code == 200:
+        return r.json()["city"]
+
+
 def save_to_file(item, value):
     # save item to .env file with key=value formate
-    with open(".env") as f:
-        copy = f.read()
-        copy = re.sub(f"{item}.*", f"{item}={value}", copy)
+    print("saving to file")
+    try:
+        with open(".env") as f:
+            copy = f.read()
 
-    with open(".env", "w") as f:
-        f.write(copy)
+        if item in copy:
+            copy = re.sub(f"{item}.*", f"{item}={value}", copy)
+            with open(".env", "w") as f:
+                f.write(copy)
+        else:
+            with open(".env", "a") as f:
+                f.write(f"\n{item}={value}")
+
+    except FileNotFoundError:
+        print("making .env file")
+        with open(".env", "w") as f:
+            pass
+        save_to_file(item, value)
 
 
 def main():
@@ -60,12 +78,12 @@ def main():
     save = args.save
     city = "+".join(args.city) if type(args.city) is list else args.city
     print("++++++++++")
-    print(key)
-    print(city)
-    print(save)
+#    print(key)
+#    print(city)
+#    print(save)
     print("++++++++++")
 
-    weather = getWeather(city, key)
+    weather = getWeather(city, _key)
     # save key if key is passed
     if key:
         save_to_file("key", key)
@@ -85,9 +103,10 @@ def main():
 
 if __name__ == "__main__":
     load_dotenv()
-    key = os.getenv("key")
-    city = os.getenv("city")
-
+    _key = os.getenv("key") if os.getenv(
+        "key") else "57720d9a6c316db99681b89f9302a6d1"
+    print(_key)
+    city = os.getenv("city") if os.getenv("city") else get_location()
     main()
 
 
@@ -96,5 +115,4 @@ if __name__ == "__main__":
 X 2. work on saving city
 X 3. work on taking api keys
 X 4. make argpars arguments in a function because it runs befor load_dotenv() gets called
-
 """
