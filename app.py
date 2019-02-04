@@ -2,10 +2,36 @@
 
 import os
 import re
-import time
 import requests
 import argparse
 from dotenv import load_dotenv
+
+
+def main():
+    tool = WeatherTool()
+
+    # if user provide a city
+    if tool.city:
+        city = tool.city
+    elif os.getenv("city"):
+        city = os.getenv("city")
+    else:
+        print("getting location")
+        city = tool.get_location()
+        tool.save_to_file("city", city)
+
+    # if user provide his own apikey
+    if tool.key:
+        key = tool.key
+        tool.save_to_file("key", key)
+    elif os.getenv("key"):
+        key = os.getenv("key")
+    else:
+        "free api key for general use"
+        key = "57720d9a6c316db99681b89f9302a6d1"
+
+    result = tool.get_weather(city, key)
+    tool.formate_text(result)
 
 
 class WeatherTool:
@@ -22,7 +48,6 @@ class WeatherTool:
         parser.add_argument(
             "-s", "--save", help="save your city for next time useage by default", action="store_true")
 
-        # nargs == Number of arguments for one action.
         # defaults to none else you pass a --key flag and an api key (--key apikey)
         parser.add_argument(
             "--key", help="save your own openweathermap api key", type=str)
@@ -31,6 +56,7 @@ class WeatherTool:
         self.key = self.args.key
         self.save = self.args.save
         city = self.args.city
+        # if user entier Multi-Word city
         self.city = "+".join(city) if type(city) is list else city
 
         if self.city and self.save:
@@ -40,8 +66,9 @@ class WeatherTool:
         url = f"http://api.openweathermap.org/data/2.5/weather?q={query}&units=imperial&appid={key}"
         r = func(url)
         json = r.json()
+        properties_from_api = ("name", "weather", "main", "speed")
         return {
-            key: json[key] for key in json if key == "name" or key == "weather" or key == "main" or key == "speed"
+            key: json[key] for key in json if key in properties_from_api
         }
 
     def get_location(self, func=requests.get):
@@ -73,32 +100,9 @@ class WeatherTool:
         # State and description of results
         print(
             f'{results["weather"][0]["main"]} ,{results["weather"][0]["description"]}')
-        # # Temp and humidity and pressure
+        # Temp and humidity and pressure
         for item in results["main"]:
             print(f"{item} {results['main'][item]}")
-
-
-def main():
-    tool = WeatherTool()
-    if tool.city:
-        city = tool.city
-    elif os.getenv("city"):
-        city = os.getenv("city")
-    else:
-        print("getting location")
-        city = tool.get_location()
-        tool.save_to_file("city", city)
-
-    if tool.key:
-        key = tool.key
-        tool.save_to_file("key", key)
-    elif os.getenv("key"):
-        key = os.getenv("key")
-    else:
-        key = "57720d9a6c316db99681b89f9302a6d1"
-
-    result = tool.get_weather(city, key)
-    tool.formate_text(result)
 
 
 if __name__ == "__main__":
@@ -110,5 +114,5 @@ if __name__ == "__main__":
 1. work on caching http requests
 X 2. work on saving city
 X 3. work on taking api keys
-X 4. make argpars arguments in a function because it runs befor load_dotenv() gets called
+X 4. fix function  order bug 
 """
