@@ -27,11 +27,11 @@ def main():
     elif os.getenv("key"):
         key = os.getenv("key")
     else:
-        "free api key for general use"
+        #free api key for general use
         key = "57720d9a6c316db99681b89f9302a6d1"
 
     result = tool.get_weather(city, key)
-    tool.formate_text(result)
+    tool.format_text(result)
 
 
 class WeatherTool:
@@ -44,7 +44,7 @@ class WeatherTool:
         parser.add_argument(
             "city", help="get weather for spescified city", type=str, nargs="*")
 
-        # Optional arg. defaults to False
+        # optional arg. defaults to False
         parser.add_argument(
             "-s", "--save", help="save your city for next time useage by default", action="store_true")
 
@@ -56,7 +56,7 @@ class WeatherTool:
         self.key = self.args.key
         self.save = self.args.save
         city = self.args.city
-        # if user entier Multi-Word city
+        # if user enter Multi-Word city
         self.city = "+".join(city) if type(city) is list else city
 
         if self.city and self.save:
@@ -94,7 +94,7 @@ class WeatherTool:
                 pass
             self.save_to_file(item, value)
 
-    def formate_text(self, results):
+    def format_text(self, results):
         # Name of city
         print(results["name"])
         # State and description of results
