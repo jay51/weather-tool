@@ -2,7 +2,10 @@
 
 import os
 import re
-import requests
+#import requests
+from urllib.request import urlopen
+from urllib.parse import urlencode 
+import json
 import argparse
 from dotenv import load_dotenv
 
@@ -62,18 +65,22 @@ class WeatherTool:
         if self.city and self.save:
             self.save_to_file("city", self.city)
 
-    def get_weather(self, query, key, func=requests.get):
+    def get_weather(self, query, key, func=urlopen):
         url = f"http://api.openweathermap.org/data/2.5/weather?q={query}&units=imperial&appid={key}"
-        r = func(url)
-        json = r.json()
+        with func(url) as res:
+            json_data = json.loads(res.read())
         properties_from_api = ("name", "weather", "main", "speed")
         return {
-            key: json[key] for key in json if key in properties_from_api
+            key: json_data[key] for key in json_data if key in properties_from_api
         }
-
-    def get_location(self, func=requests.get):
-        r = func("https://ipinfo.io").json() or {"city": "none"}
-        return r["city"]
+    
+    # find out why this function gets called first or is just compile time
+    #def get_location(self, func=requests.get):
+        #r = func("https://ipinfo.io").json() or {"city": "none"}
+        #return r["city"]
+    def get_location(self, func=urlopen):
+        with func("https://ipinfo.io") as res:
+            return json.loads(res.read())["city"] or {"city": "none"}
 
     def save_to_file(self, item, value):
         print("saving to File")
