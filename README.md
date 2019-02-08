@@ -3,10 +3,10 @@
 A CLI weather tool to display the weather in your area.
 
 #### How it works?
-
-- [x] Make a request to weather api
-- [x] Parse the incoming data
-- [x] Display the data in a nice formate
+` ./app <city>`
+- Make a request to weather api
+- Parse the incoming data
+- Display the data in a nice formate
 
 #### How to install?
 
