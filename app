@@ -1,4 +1,4 @@
-#!./env/bin/python3
+#!env/bin/python3
 
 import os
 import re
@@ -66,7 +66,7 @@ def get_weather(query, key, func=urlopen):
     url = f"http://api.openweathermap.org/data/2.5/weather?q={query}&units=imperial&appid={key}"
     with func(url) as res:
         json_data = json.loads(res.read())
-    properties_from_api = ("name", "weather", "main", "speed")
+    properties_from_api = ("name", "weather", "main")
     return {
         key: json_data[key] for key in json_data if key in properties_from_api
     }
@@ -114,7 +114,4 @@ if __name__ == "__main__":
 
 """Todo
 1. work on caching http requests
-X 2. work on saving city
-X 3. work on taking api keys
-X 4. fix function  order bug 
 """
