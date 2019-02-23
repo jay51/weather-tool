@@ -1,0 +1,28 @@
+#!env/bin/python3
+
+# make sure the module name ends with (.py) otherwise python wont catch it.
+import unittest
+from urllib.request import urlopen
+from app import init_argparse, get_weather , get_location, format_text, save_to_file
+
+
+class TestrTool(unittest.TestCase):
+
+
+    def test_get_weather(self):
+       r =  get_weather("houston", "57720d9a6c316db99681b89f9302a6d1", urlopen)
+       is_equal = True if "name" in r and "main" in r and "weather" in r  else False
+       self.assertTrue(is_equal)
+
+    def test_get_location(self):
+        r = get_location(urlopen)
+        have_city = type(r) is str
+        self.assertTrue(have_city)
+
+    def test_get_location_no_inter(self):
+        r = get_location(urlopen)
+        have_city = type(r) is str
+        self.assertTrue(have_city)
+
+if __name__ == "__main__":
+    unittest.main()

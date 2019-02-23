@@ -2,13 +2,17 @@
 
 import os
 import re
-from urllib.request import urlopen
+from urllib.request import urlopen, URLError
 import json
 import argparse
 from dotenv import load_dotenv
 
 
 def main():
+    if(not check_internet()):
+        print("No Internet connection detected")
+        return 
+
     args = init_argparse()
     city = args.city
     key = args.key
@@ -60,6 +64,14 @@ def init_argparse(greeting="Thank you for using our tool :)"):
         "--key", help="save your own openweathermap api key", type=str)
 
     return parser.parse_args()
+
+
+def check_internet():
+    try:
+        urlopen("https://google.com", timeout=5)
+        return True
+    except URLError as err:
+        return False
 
 
 def get_weather(query, key, func=urlopen):
